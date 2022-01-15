@@ -1,0 +1,8 @@
+{
+  "short_name": "API FRONT END",
+  "name": "rest api front end",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

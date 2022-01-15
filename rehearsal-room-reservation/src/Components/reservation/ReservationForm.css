@@ -1,0 +1,68 @@
+.reservationForm__Header {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.reservationForm__Header_info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.add-icon {
+    background-color: #fff;
+    border-radius: 10px;
+    font-size: 3rem !important;
+    margin-right: 20px;
+    -webkit-box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+    -moz-box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+    box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+}
+
+.update-icon {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 1.2em !important;
+    height: 1.2em !important;
+    font-size: 2.6rem !important;
+    margin-right: 20px;
+    -webkit-box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+    -moz-box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+    box-shadow: 2px 3px 15px 1px rgba(0,0,0,0.71);
+}
+
+.reservationForm__Header_title {
+    margin-bottom: 0;
+}
+
+.react-datetime-picker {
+    display: flex !important;
+}
+
+.react-datetime-picker__wrapper {
+    padding: 4px;
+    position: relative;
+    border-radius: calc(2 * 3px);
+    border-color: #07b39b;
+}
+
+.btn-creer, .btn-modifier {
+    background-color: #263238;
+    color: #fff;
+    font-size: 16px;
+}
+
+.btn-annuller {
+    height: fit-content;
+}
+
+.btn-creer:hover {
+    color: #fff;
+    background-color: #607D8B;
+}
+
+.send-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 6px;
+}

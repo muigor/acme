@@ -1,0 +1,26 @@
+#Dependencies
+rehearsal-room-reservation/node_modules
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+rehearsal-room-reservation/node_modules
+rehearsal-room-reservation/.pnp
+rehearsal-room-reservation/.pnp.js
+
+# testing
+rehearsal-room-reservation/coverage
+
+# production
+rehearsal-room-reservation/build
+
+# misc
+rehearsal-room-reservation/.DS_Store
+rehearsal-room-reservation/.env.local
+rehearsal-room-reservation/.env.development.local
+rehearsal-room-reservation/.env.test.local
+rehearsal-room-reservation/.env.production.local
+
+rehearsal-room-reservatio/nnpm-debug.log*
+rehearsal-room-reservation/yarn-debug.log*
+rehearsal-room-reservation/yarn-error.log*

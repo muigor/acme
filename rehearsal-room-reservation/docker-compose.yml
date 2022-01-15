@@ -1,0 +1,19 @@
+version: '3.7'
+
+services: 
+    react :
+        container_name: react-app
+        build: .
+        volumes:
+            - '.:/app'
+            - '/app/node_modules'
+        ports:
+            - "3000:3000"
+        networks:
+            - socle_proxypass_network
+
+        
+networks:
+  socle_proxypass_network:
+    external:
+      name: proxypass_network
