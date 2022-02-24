@@ -3,7 +3,7 @@ import Moment from 'react-moment';
 import { motion } from 'framer-motion';
 import { CSVLink } from 'react-csv'
 
-import { salleGetAll, salleGetOne,createSalle, deleteSalle, updateSalle } from "../../Webservices/endpoints";
+import { salleGetAll, salleGetOne,createSalle, deleteSalle, updateSalle,categoriesGetAll } from "../../Webservices/endpoints";
 import './salle.css';
 
 import Notifications from '../Notifications'
@@ -14,6 +14,10 @@ function Salle() {
 
     const [creationError, setCreationError] = useState(null)
     const [listeSalles, setListeSalles] = useState([])
+    const [valueDescription, setValueDescription] = useState('');
+    const [valueNumero, setValueNumero] = useState('');
+    const [valueCategorie, setValueCategorie] = useState('1');
+    const [listeCategories, setListeCategories] = useState([])
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
     const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title:'', subtitle:''})
@@ -21,6 +25,21 @@ function Salle() {
     const [currentPage, setCurrentPage] = useState(1)
     const [sallesPerPage, setSallesPerPage] = useState(6)
     
+
+
+    /**What i added */
+    /**
+     * Hook to get all categories
+     */
+     useEffect(() => {
+        categoriesGetAll()
+        .then((rqResult) => rqResult.json())
+            .then((data) => {
+                setListeCategories(data)
+            })
+    }, [])
+    
+
     /**
      * Hook to get all salles available
      */
@@ -41,12 +60,29 @@ function Salle() {
         setShowUpdate({'isClicked': true, 'id': id})
     }
 
+    const handleSelectCategorieChange = e => {
+        console.log(e.target.value);
+        setValueCategorie(e.target.value);    
+    }
+
+    const handleNumeroChange = e => {
+        setValueNumero(e.target.value);    
+    }
+
+    // What i added
+    /*const handleSelectDescription = e => {
+        console.log(e.target.value);
+        setValueDescription(e.target.value);
+       }*/
+
     function handleCreate(e) {
         if(creationError) {setCreationError(false);}
-        e.preventDefault();
-        const numero = e.target[0].value;
+        e.preventDefault(); 
+        //const numero = parseInt(valueNumero,10)
+        const numero = e.target[0].value
+        const description = e.target[1].value
 
-        createSalle(numero)
+        createSalle(numero,description,valueCategorie)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
@@ -65,13 +101,17 @@ function Salle() {
                     })
                 }
             });
+
+            //setValueCategorie('')
+            
     }
 
     // show update form
     function handleUpdate(e) {
         e.preventDefault();
         const numero = e.target[0].value;
-        updateSalle(showUpdate.id, numero)
+        const description = e.target[1].value;
+        updateSalle(showUpdate.id, numero,description,valueCategorie)
         .then(() => {
             setListeSalles([])
             setNotify({
@@ -114,13 +154,26 @@ function Salle() {
     
     // change the page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+    /**What i added */
+    function findTypeCategorieById(id) {
+        if (listeCategories.length !== 0) {
+            return listeCategories.find(elem => elem.id === id).type
+        }
+    }
+    
     const sortedList = currentSalles.sort((a, b) => (a.created_at < b.created_at) ? 1 : -1)
     
     // Display table rows of salles
     const salles = sortedList.map(salle => {
+    
+        console.log(salle)
+        /*console.log(salle.id)*/
+        console.log(findTypeCategorieById(salle.categorie))
         return (
             <tr>
                 <td>{salle.numero}</td>
+                <td>{findTypeCategorieById(salle.categorie)}</td>
                 <td>{salle.description}</td>
                 <td>
                     <Moment format="DD/MM/YYYY - H:mm:ss" date={salle.created_at} />
@@ -194,9 +247,21 @@ function Salle() {
                             <legend>{ !showUpdate.isClicked ? "Ajouter une salle" : "Modifier la salle"}</legend>
                             <hr />
                             <label htmlFor="numeroSalle" className="form-label">Numero : </label>
+                            
                             <input type="text" name="numero" className="form-control" id="numeroSalle" required />
+                            
                             <label htmlFor="descriptionSalle" className="form-label">Déscription : </label>
                             <input type="text" name="description" className="form-control" id="descriptionSalle" required />
+                            <label htmlFor="selectCategorie" className="form-label">Catégorie:</label>
+                                
+                            <select value={valueCategorie} onChange={handleSelectCategorieChange} className="form-control" id="selectCategorie">
+                                        {
+                                            listeCategories.map((categorie) =>
+                                                <option key={categorie.id} value={categorie.id}>{categorie.type}</option>
+                                            )
+                                        }
+                            </select>
+                                
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
                             <div>
@@ -223,8 +288,9 @@ function Salle() {
                     <table className="table table-dark table-striped table-hover">
                         <thead>
                             <tr className="table-primary">
-                                <th>Numéro Salle</th>
-                                <th>Déscription de la salle</th>
+                                <th>Numéro</th>
+                                <th>Catégorie</th>
+                                <th>Déscription</th>
                                 <th>Crée le</th>
                                 <th>Modifier</th>
                                 <th>Supprimer</th>
@@ -255,3 +321,16 @@ function Salle() {
 }
 
 export default Salle
+
+
+
+/**<input 
+          type="text" 
+          className="form-control" 
+                                        id="inputNumero"
+                                        value={}
+                                        onChange={handleNumeroChange}
+                                        required
+                                        //placeholder="Entrer la durée" 
+                                    /> */
+

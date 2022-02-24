@@ -3,7 +3,7 @@ import Moment from 'react-moment';
 import { motion } from 'framer-motion';
 import { CSVLink } from 'react-csv'
 
-import { materialsGetAll, materialsGetOne, createMaterial, updateMaterial, deleteMaterial } from "../../Webservices/endpoints";
+import { materialsGetAll, materialsGetOne, createMaterial, updateMaterial, deleteMaterial,salleGetAll } from "../../Webservices/endpoints";
 import './material.css';
 
 import Notifications from '../Notifications'
@@ -14,6 +14,8 @@ function Material() {
 
     const [creationError, setCreationError] = useState(null)
     const [listeMaterials, setListeMaterials] = useState([])
+    const [listeSalles, setListeSalles]       = useState([])
+    const [valueSalle, setValueSalle] = useState('1');
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
     const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title:'', subtitle:''})
@@ -36,6 +38,27 @@ function Material() {
         return listeMaterials;
     }, [listeMaterials])
 
+    useEffect(() => {
+        salleGetAll()
+        .then((rqResult) => rqResult.json())
+            .then((data) => {
+                setListeSalles(data)
+            })
+        
+        return listeSalles;
+    }, []);
+
+    function findNumSalleById(id) {
+        if (listeSalles.length !== 0) {
+            return listeSalles.find(elem => elem.id === id).numero
+        }
+    }
+
+    const handleSelectSalleChange = e => {
+        console.log(e.target.value);
+        setValueSalle(e.target.value);    
+    }
+
     // show update form
     function isUpdateMaterialBtnClicked(id) {
         setShowUpdate({'isClicked': true, 'id': id})
@@ -46,7 +69,9 @@ function Material() {
         e.preventDefault();
         const nom = e.target[0].value;
 
-        createMaterial(nom)
+
+
+        createMaterial(nom,valueSalle)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
@@ -65,13 +90,15 @@ function Material() {
                     })
                 }
             });
+
+            setValueSalle('')
     }
 
     // show update form
     function handleUpdate(e) {
         e.preventDefault();
         const nom = e.target[0].value;
-        updateMaterial(showUpdate.id, nom)
+        updateMaterial(showUpdate.id, nom, valueSalle)
         .then(() => {
             setListeMaterials([])
             setNotify({
@@ -118,9 +145,13 @@ function Material() {
     
     // Display table rows of materials
     const materials = sortedList.map(materiel => {
+        console.log(materiel)
+        console.log("fonction")
+        console.log(findNumSalleById(materiel.salle))
         return (
             <tr>
                 <td>{materiel.nom}</td>
+                <td>{findNumSalleById(materiel.salle)}</td>
                 <td>
                     <Moment format="DD/MM/YYYY - H:mm:ss" date={materiel.created_at} />
                 </td>
@@ -194,6 +225,14 @@ function Material() {
                             <hr />
                             <label htmlFor="nomMatériel" className="form-label">Nom : </label>
                             <input type="text" name="nom" className="form-control" id="nomMatériel" required />
+                            <label htmlFor="numeroSalle" className="form-label">Salle : </label>
+                            <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle">
+                                        {
+                                            listeSalles.map((salle) =>
+                                                <option key={salle.id} value={salle.id}>{salle.numero}</option>
+                                            )
+                                        }
+                                    </select>
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
                             <div>
@@ -221,6 +260,7 @@ function Material() {
                         <thead>
                             <tr className="table-primary">
                                 <th>Nom matériel</th>
+                                <th>Salle</th>
                                 <th>Crée le</th>
                                 <th>Modifier</th>
                                 <th>Supprimer</th>

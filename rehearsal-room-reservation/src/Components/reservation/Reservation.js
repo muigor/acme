@@ -88,6 +88,7 @@ function Reservation() {
     }
 
     const handleUniteChange = e => {
+        console.log(e.target.value);
         setValueUnite(e.target.value);    
     }
 
@@ -101,12 +102,12 @@ function Reservation() {
         setValueSalle(e.target.value);    
     }
 
-    const handleCreate = e => {
+    function handleCreate(e) {
         if(creationError) {setCreationError(false);}
         e.preventDefault();
         const Duree = parseInt(valueDuree, 10);
 
-        createReservation(valueDate, Duree, valueSalle, valueClient)
+        createReservation(valueDate, Duree, valueSalle, valueClient,valueUnite)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
@@ -172,7 +173,7 @@ function Reservation() {
     const currentReservations = listeReservation.slice(indexOfFirstReservation, indexOfLastReservation);
 
     // change the page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber)
+    //const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
     function findNomClientById(id) {
         if (listeClient.length !== 0) {
@@ -185,18 +186,20 @@ function Reservation() {
             return listeSalle.find(elem => elem.id === id).numero
         }
     }
+    //change the page
+    const paginate = (pageNumber) => setCurrentPage(pageNumber)
+    const sortedList = currentReservations.sort((a,b) =>(a.created_at < b.created_at) ? 1 : -1)
     
     // Display table rows of categories
-    const reservations = currentReservations
-                        .sort((a, b) => (a.created_at < b.created_at) ? 1 : -1)
-                        .map(reservation => {
+    //const reservations = sortedList.map
+    const reservations = sortedList.map(reservation => {
         console.log(reservation)
         return (
             <tr>
                 <td><Moment format="DD/MM/YYYY - H:mm:ss" date={reservation.dateDebut} /></td>
                 <td>{reservation.duree} {reservation.unite}</td>
-                <td>{ findNomClientById(reservation.id) }</td>
-                <td>{ findNumSalleById(reservation.id) }</td>
+                <td>{ findNomClientById(reservation.client) }</td>
+                <td>{ findNumSalleById(reservation.Salle) }</td>
 
                 <td>
                     <Moment format="DD/MM/YYYY - H:mm:ss" date={reservation.created_at} />
@@ -289,7 +292,7 @@ function Reservation() {
                                 className="btn btn-outline-secondary btn-sm btn-annuller" 
                                 onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
                             >
-                                Annuller la modification
+                                Annuler la modification
                             </span> : <></>}
                     </div>
                     <hr />
@@ -318,7 +321,7 @@ function Reservation() {
                                     />
                                 </div>
                                 <div className="col-sm-5">
-                                    <select value={valueUnite} onChange={handleUniteChange} className="form-control" >
+                                    <select value={valueUnite} onChange={handleUniteChange} className="form-control" id="selectUnite">
                                         <option selected value="Jours">Jours</option>
                                         <option value="Heures">Heures</option>
                                         <option value="Minutes">Minutes</option>
@@ -378,7 +381,7 @@ function Reservation() {
                             
                             <th>Crée le</th>
                             <th>Modifier</th>
-                            <th>Annuller</th>
+                            <th>Annuler</th>
                         </tr>
                     </thead>
                     <tbody>

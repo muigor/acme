@@ -50,6 +50,7 @@ function Client() {
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
+                console.log(nom);
                 if( data.nom[0] === "Nom deja pris" ) {
                     setNotify({
                         isOpen: true,
@@ -105,7 +106,7 @@ function Client() {
             }
         })
     }
-
+        /*console.log(clients)*/
         // Get current client
         const indexOfLastClient = currentPage * clientsPerPage;
         const indexOfFirstClient = indexOfLastClient - clientsPerPage;
@@ -138,6 +139,7 @@ function Client() {
                     <button 
                         type="button" 
                         className="btn btn-outline-warning" 
+                        
                         onClick={() => { 
                             setConfirmDialog({
                                 isOpen: true,

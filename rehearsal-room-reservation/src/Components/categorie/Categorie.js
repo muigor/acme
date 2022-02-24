@@ -44,13 +44,15 @@ function Categorie() {
     function handleCreate(e) {
         if(creationError) {setCreationError(false);}
         e.preventDefault();
-        const nom = e.target[0].value;
+        const type = e.target[0].value;
 
-        createCategories(nom)
+        createCategories(type)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
-                if( data.nom[0] === "Nom deja pris" ) {
+                console.log(type);
+                //console.log(data.nom[0]);
+                if( data.type[0] === "Nom deja pris" ) {
                     setNotify({
                         isOpen: true,
                         message: "Nom deja pris",
@@ -70,8 +72,8 @@ function Categorie() {
     // show update form
     function handleUpdate(e) {
         e.preventDefault();
-        const nom = e.target[0].value;
-        updateCategories(showUpdate.id, nom)
+        const type = e.target[0].value;
+        updateCategories(showUpdate.id, type)
         .then(() => {
             setListeCategories([])
             setNotify({
@@ -192,8 +194,8 @@ function Categorie() {
                         <div className="mb-4">
                             <legend>{ !showUpdate.isClicked ? "Ajouter une catégorie" : "Modifier la catégorie"}</legend>
                             <hr />
-                            <label htmlFor="nomCategorie" className="form-label">Nom : </label>
-                            <input type="text" name="nom" className="form-control" id="nomCategorie" required />
+                            <label htmlFor="typeCategorie" className="form-label">Nom : </label>
+                            <input type="text" name="type" className="form-control" id="typeCategorie" required />
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
                             <div>

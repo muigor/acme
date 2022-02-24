@@ -12,6 +12,7 @@ function App() {
     const [totalMaterials, setTotalMaterials]   = useState(0)
     const [totalSalles, setTotalSalles]         = useState(0)
     const [listeClients, setListeClients]       = useState([])
+    const [listeSalles, setListeSalles]       = useState([])
     const [listeReservations, setListeReservations] = useState([])
 
 
@@ -59,6 +60,16 @@ function App() {
         return listeClients;
     }, []);
 
+    useEffect(() => {
+        salleGetAll()
+        .then((rqResult) => rqResult.json())
+            .then((data) => {
+                setListeSalles(data)
+            })
+        
+        return listeSalles;
+    }, []);
+
     // Hook to get total all reservations
     useEffect(() => {
         reservationGetAll()
@@ -76,17 +87,25 @@ function App() {
         }
     }
 
+    function findNumSalleById(id) {
+        if (listeSalles.length !== 0) {
+            return listeSalles.find(elem => elem.id === id).numero
+        }
+    }
+
     const sortedList = listeReservations.sort((a, b) => (a.date_created < b.date_created) ? 1 : -1)
 
     // Display table of recent reservations (only 6 rows)
     const reservationRecentes = sortedList.slice(0, 6).map( reserv => {
-        
+        console.log(reserv)
+        console.log("fonction")
+        //console.log(findNomClientById(reserv.client.id))
         return(
             <tr>
                 <td><Moment format="DD/MM/YYYY - H:mm:ss" date={reserv.dateDebut} /></td>
-                <td>{reserv.duree} {reserv.unite}</td>
-                <td>{ findNomClientById(reserv.id) }</td>
-                <td>{reserv.Salle}</td>
+                <td>{reserv.duree + reserv.unite}</td>
+                <td>{ findNomClientById(reserv.client) }</td>
+                <td>{findNumSalleById(reserv.Salle)}</td>
             </tr>
         );
     })
