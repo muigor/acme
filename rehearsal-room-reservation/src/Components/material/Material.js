@@ -226,7 +226,8 @@ function Material() {
                             <label htmlFor="nomMatériel" className="form-label">Nom : </label>
                             <input type="text" name="nom" className="form-control" id="nomMatériel" required />
                             <label htmlFor="numeroSalle" className="form-label">Salle : </label>
-                            <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle">
+                            <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle" required>
+                            <option value="">Choisissez une salle</option>
                                         {
                                             listeSalles.map((salle) =>
                                                 <option key={salle.id} value={salle.id}>{salle.numero}</option>

@@ -22,7 +22,13 @@ const useStyles = makeStyles(theme => ({
         marginBottom: theme.spacing(1.2),
     }
 }))
-
+/*
+function addDaysToDate(date date_debut, days){
+    var res = new Date(date);
+    res.setDate(res.getDate() + days);
+    return res;
+}
+*/
 
 function Reservation() {
     const classes = useStyles();
@@ -37,7 +43,7 @@ function Reservation() {
     const [valueDuree, setValueDuree] = useState('');
     const [valueUnite, setValueUnite] = useState('');
     const [valueClient, setValueClient] = useState('1');
-    const [valueSalle, setValueSalle] = useState('1');
+    const [valueSalle, setValueSalle] = useState('');
 
     const [listeReservation, setListeReservation] = useState([])
     const [listeClient, setListeClient] = useState([])
@@ -92,6 +98,10 @@ function Reservation() {
         setValueUnite(e.target.value);    
     }
 
+    function isUpdateReservationBtnClicked(id) {
+        setShowUpdate({'isClicked': true, 'id': id})
+    }
+
     const handleSelectClientChange = e => {
         console.log(e.target.value);
         setValueClient(e.target.value);    
@@ -111,6 +121,13 @@ function Reservation() {
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
+                if (data.Salle[0] === "Salle déjà prise"){
+                    setNotify({
+                        isOpen: true,
+                        message: "Salle déjà prise",
+                        type: "error",
+                    })
+                } else {
                 setListeReservation([])
                 setNotify({
                     isOpen: true,
@@ -118,6 +135,7 @@ function Reservation() {
                     type: "success",
                 })
                 }
+            }
         );
 
         setValueDuree('')
@@ -132,7 +150,7 @@ function Reservation() {
         e.preventDefault();
         const Duree = parseInt(valueDuree, 10);
 
-        updateReservation(showUpdate.id, valueDate, Duree, valueSalle, valueClient,valueUnite)
+        updateReservation(showUpdate.id, valueDate, Duree,valueUnite, valueSalle, valueClient)
         .then(() => {
             setListeReservation([])
             setNotify({
@@ -209,7 +227,8 @@ function Reservation() {
                     <button 
                         type="button" 
                         className="btn btn-outline-info" 
-                        onClick={() => setShowUpdate({'isClicked': true, 'id': reservation.id}) } 
+                        /*onClick={() => setShowUpdate({'isClicked': true, 'id': reservation.id})*/
+                        onClick={() => isUpdateReservationBtnClicked(reservation.id)} 
                     >
                         <i className="fas fa-pen"></i>
                     </button>
@@ -299,7 +318,7 @@ function Reservation() {
                     <form onSubmit={ !showUpdate.isClicked ? handleCreate : handleUpdate}>
                         <div className="row">
                             <div className="form-group col-sm-6 row">
-                                <label htmlFor="inputDateDebut" className="col-sm-2 col-form-label">Crée le</label>
+                                <label htmlFor="inputDateDebut" className="col-sm-2 col-form-label">Date de début</label>
                                 <div className="col-sm-10">
                                     <DateTimePicker
                                         onChange={onChangeDate}
@@ -317,12 +336,14 @@ function Reservation() {
                                         id="inputDuree"
                                         value={valueDuree}
                                         onChange={handleDureeChange} 
-                                        placeholder="Entrer la durée" 
+                                        placeholder="Entrer la durée"
+                                        required
                                     />
                                 </div>
                                 <div className="col-sm-5">
-                                    <select value={valueUnite} onChange={handleUniteChange} className="form-control" id="selectUnite">
-                                        <option selected value="Jours">Jours</option>
+                                    <select value={valueUnite} onChange={handleUniteChange} className="form-control" id="selectUnite" required>
+                                        <option value="">Unité</option>
+                                        <option value="Jours">Jours</option>
                                         <option value="Heures">Heures</option>
                                         <option value="Minutes">Minutes</option>
                                     </select>
@@ -331,9 +352,12 @@ function Reservation() {
                             <div className="form-group col-sm-6 row">
                                 <label htmlFor="selectClient" className="col-sm-2 col-form-label">Client</label>
                                 <div className="col-sm-10">
-                                    <select value={valueClient} onChange={handleSelectClientChange} className="form-control" id="selectClient">
+                                    <select value={valueClient} onChange={handleSelectClientChange} className="form-control" id="selectClient" required> 
+                                        <option value="">Choisissez un client</option>
+                                        
                                         {
                                             listeClient.map((client) =>
+                                            
                                                 <option key={client.id} value={client.id}>{client.nom}</option>
                                             )
                                         }
@@ -343,7 +367,8 @@ function Reservation() {
                             <div className="form-group col-sm-6 row">
                                 <label htmlFor="selectSalle" className="col-sm-2 col-form-label">Salle</label>
                                 <div className="col-sm-10">
-                                    <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle">
+                                    <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle" required>
+                                        <option value="">Choisissez une salle</option>
                                         {
                                             listeSalle.map((salle) =>
                                                 <option key={salle.id} value={salle.id}>{salle.numero}</option>

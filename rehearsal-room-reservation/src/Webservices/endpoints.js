@@ -205,10 +205,11 @@ export const createReservation = (pDate, pDuree, pSalle, pClient,pUnite) => post
  * @param {number} pk The id of the Reservation to update
  * @param {date}   pDate  The Reservation Start date
  * @param {number} pDuree The Reservation duration
+ * @param {string} pUnite The unity of the duration
  * @param {number} pSalle The id of the room to be reserved
  * @param {number} pClient The id of the client making the reservation
  */
-export const updateReservation = (pk, pDate, pDuree, pSalle, pClient) => put(URL(`/reservation/${pk}/`), { "dateDebut": pDate, "duree": pDuree, "client": pClient,"Salle": pSalle}, {...BODY_JSON_HEADER})
+export const updateReservation = (pk, pDate, pDuree, pUnite, pSalle, pClient) => put(URL(`/reservation/${pk}/`), { "dateDebut": pDate, "duree": pDuree,"unite" : pUnite, "Salle": pSalle, "client": pClient}, {...BODY_JSON_HEADER})
 
 /**
  * Delete a Reservation

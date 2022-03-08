@@ -55,6 +55,8 @@ function Salle() {
         return listeSalles;
     }, [listeSalles])
 
+    
+
     // show update form
     function isUpdateSalleBtnClicked(id) {
         setShowUpdate({'isClicked': true, 'id': id})
@@ -70,10 +72,10 @@ function Salle() {
     }
 
     // What i added
-    /*const handleSelectDescription = e => {
+    const handleSelectDescription = e => {
         console.log(e.target.value);
         setValueDescription(e.target.value);
-       }*/
+       }
 
     function handleCreate(e) {
         if(creationError) {setCreationError(false);}
@@ -110,7 +112,9 @@ function Salle() {
     function handleUpdate(e) {
         e.preventDefault();
         const numero = e.target[0].value;
+        console.log("le numero" + numero)
         const description = e.target[1].value;
+        console.log("la déscription" + description)
         updateSalle(showUpdate.id, numero,description,valueCategorie)
         .then(() => {
             setListeSalles([])
@@ -254,7 +258,8 @@ function Salle() {
                             <input type="text" name="description" className="form-control" id="descriptionSalle" required />
                             <label htmlFor="selectCategorie" className="form-label">Catégorie:</label>
                                 
-                            <select value={valueCategorie} onChange={handleSelectCategorieChange} className="form-control" id="selectCategorie">
+                            <select value={valueCategorie} onChange={handleSelectCategorieChange} className="form-control" id="selectCategorie" required>
+                                <option value="">Choisissez la catégorie de la salle</option>
                                         {
                                             listeCategories.map((categorie) =>
                                                 <option key={categorie.id} value={categorie.id}>{categorie.type}</option>
