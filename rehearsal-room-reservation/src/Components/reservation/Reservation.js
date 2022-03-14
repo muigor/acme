@@ -192,6 +192,51 @@ function Reservation() {
 
     // change the page
     //const paginate = (pageNumber) => setCurrentPage(pageNumber)
+/*
+    //Fonction Reservation
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        return result;
+      }
+      
+      function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes*60000);
+      }
+      
+      function addHours(date, hours) {
+        var result = new Date(date);
+        result.setHours(result.getHours() + hours);
+        return result;
+      }
+      
+      
+      
+      function reservationValide(dateCurrentReservation, dateNewReservation, unite, duree) {
+          var valide;
+        var dateEndCurrentReservation;
+        if(unite=='Jours'){
+            dateEndCurrentReservation=addDays(dateCurrentReservation,duree);
+        }
+        else if(unite=='Heures'){
+            dateEndCurrentReservation=addHours(dateCurrentReservation,duree);
+        }
+        else{ //unite == minutes
+            dateEndCurrentReservation=addMinutes(dateCurrentReservation,duree);
+        }
+        //dateCurrentReservation va etre remaniée
+          if(new Date(dateEndCurrentReservation) < new Date(dateNewReservation)){
+          valide=true;
+          //alert('true');
+          }
+      
+          if(new Date(dateEndCurrentReservation) > new Date(dateNewReservation)){
+          valide=false;
+          //alert('false');
+          }
+        return valide ;
+      } */
+
 
     function findNomClientById(id) {
         if (listeClient.length !== 0) {

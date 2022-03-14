@@ -112,7 +112,13 @@ function Client() {
         const indexOfFirstClient = indexOfLastClient - clientsPerPage;
     
         const currentClients = listeClients.slice(indexOfFirstClient, indexOfLastClient);
-    
+
+        function findNomCategorieById(id){
+            if (listeClients.length !== 0) {
+                return listeClients.find(elem => elem.id === id).nom
+            }
+        }
+
         // change the page
         const paginate = (pageNumber) => setCurrentPage(pageNumber)
         const sortedList = currentClients.sort((a, b) => (a.created_at < b.created_at) ? 1 : -1)
@@ -196,7 +202,7 @@ return (
                             <legend>{ !showUpdate.isClicked ? "Ajouter un client" : "Modifier le client"}</legend>
                             <hr />
                             <label htmlFor="nomClient" className="form-label">Nom : </label>
-                            <input type="text" name="nom" className="form-control" id="nomClient" required />
+                            <input type="text"  defaultValue= {showUpdate.isClicked ? findNomCategorieById(showUpdate.id) : ""}   name="nom" className="form-control" id="nomClient" required />
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> :
                         <div>

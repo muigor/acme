@@ -54,6 +54,19 @@ function Material() {
         }
     }
 
+
+    function findIdSalleById(id) {
+        if (listeMaterials.length !== 0) {
+            return listeMaterials.find(elem => elem.id === id).salle
+        }
+    }
+
+    function findNomMaterielById(id) {
+        if (listeMaterials.length !== 0) {
+            return listeMaterials.find(elem => elem.id === id).nom
+        }
+    }
+
     const handleSelectSalleChange = e => {
         console.log(e.target.value);
         setValueSalle(e.target.value);    
@@ -138,6 +151,8 @@ function Material() {
         const indexOfFirstMaterial = indexOfLastMaterial - materialsPerPage;
     
         const currentMaterials = listeMaterials.slice(indexOfFirstMaterial, indexOfLastMaterial);
+
+        
     
     // change the page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
@@ -224,13 +239,16 @@ function Material() {
                             <legend>{ !showUpdate.isClicked ? "Ajouter un matériel" : "Modifier le matériel"}</legend>
                             <hr />
                             <label htmlFor="nomMatériel" className="form-label">Nom : </label>
-                            <input type="text" name="nom" className="form-control" id="nomMatériel" required />
+                            <input type="text" defaultValue={showUpdate.isClicked? findNomMaterielById(showUpdate.id) : ""}  name="nom" className="form-control" id="nomMatériel" required />
                             <label htmlFor="numeroSalle" className="form-label">Salle : </label>
                             <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle" required>
-                            <option value="">Choisissez une salle</option>
+                            {!showUpdate.isClicked ?
+                            <option value="">Choisissez une salle</option> : ""}
                                         {
                                             listeSalles.map((salle) =>
-                                                <option key={salle.id} value={salle.id}>{salle.numero}</option>
+                                                showUpdate.isClicked && salle.id == findIdSalleById(showUpdate.id) ?
+                                                <option key={salle.id} value={salle.id} selected>{findNumSalleById(findIdSalleById(showUpdate.id))}</option>:
+                                                <option key={salle.id} value={salle.id} >{salle.numero}</option>
                                             )
                                         }
                                     </select>

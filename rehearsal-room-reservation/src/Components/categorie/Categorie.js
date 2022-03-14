@@ -114,6 +114,12 @@ function Categorie() {
 
     const currentCategories = listeCategories.slice(indexOfFirstCategory, indexOfLastCategory);
 
+    function findTypeCategorieById(id){
+        if (listeCategories.length !== 0) {
+            return listeCategories.find(elem => elem.id === id).type
+        }
+    }
+
     // change the page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
     const sortedList = currentCategories.sort((a, b) => (a.created_at < b.created_at) ? 1 : -1)
@@ -195,7 +201,7 @@ function Categorie() {
                             <legend>{ !showUpdate.isClicked ? "Ajouter une catégorie" : "Modifier la catégorie"}</legend>
                             <hr />
                             <label htmlFor="typeCategorie" className="form-label">Nom : </label>
-                            <input type="text" name="type" className="form-control" id="typeCategorie" required />
+                            <input type="text" defaultValue= {showUpdate.isClicked ? findTypeCategorieById(showUpdate.id) : ""}name="type" className="form-control" id="typeCategorie" required />
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
                             <div>

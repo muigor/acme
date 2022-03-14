@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,Component } from 'react'
 import Moment from 'react-moment';
 import { motion } from 'framer-motion';
 import { CSVLink } from 'react-csv'
@@ -10,13 +10,16 @@ import Notifications from '../Notifications'
 import ConfirmDialog from '../ConfirmDialog'
 import Pagination from './Pagination'
 
+
+
 function Salle() {
+    
 
     const [creationError, setCreationError] = useState(null)
     const [listeSalles, setListeSalles] = useState([])
     const [valueDescription, setValueDescription] = useState('');
     const [valueNumero, setValueNumero] = useState('');
-    const [valueCategorie, setValueCategorie] = useState('1');
+    const [valueCategorie, setValueCategorie] = useState('');
     const [listeCategories, setListeCategories] = useState([])
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
@@ -68,6 +71,7 @@ function Salle() {
     }
 
     const handleNumeroChange = e => {
+        console.log(e.target.value);
         setValueNumero(e.target.value);    
     }
 
@@ -81,17 +85,17 @@ function Salle() {
         if(creationError) {setCreationError(false);}
         e.preventDefault(); 
         //const numero = parseInt(valueNumero,10)
-        const numero = e.target[0].value
-        const description = e.target[1].value
+        //const valueNumero = e.target[0].value
+        //const valueDescription = e.target[1].value
 
-        createSalle(numero,description,valueCategorie)
+        createSalle(valueNumero,valueDescription,valueCategorie)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
-                if( data.numero[0] === "Numero deja pris" ) {
+                if( data.numero[0] === "Salle déjà ajoutée" ) {
                     setNotify({
                         isOpen: true,
-                        message: "Numero deja pris",
+                        message: "Salle déjà ajoutée",
                         type: "error",
                     })
                 } else {
@@ -102,19 +106,41 @@ function Salle() {
                         type: "success",
                     })
                 }
-            });
 
-            //setValueCategorie('')
+                
+                
+            });
+        
             
+            setValueCategorie('')
+            setValueNumero('')
+            setValueDescription('')
+            
+
+      
     }
+/*
+    function changeState() { 
+        setValueNumero('');
+         // change state
+      }
+
+    /*onHandleSubmit(e) ;{
+    e.preventDefault();
+    const numero = this.state.numero;
+    this.props.onSearchTermChange(numero);
+    this.setState({
+        city: ''
+    });
+    }*/
 
     // show update form
     function handleUpdate(e) {
         e.preventDefault();
         const numero = e.target[0].value;
-        console.log("le numero" + numero)
+        //console.log("le numero" + numero)
         const description = e.target[1].value;
-        console.log("la déscription" + description)
+        //console.log("la déscription" + description)
         updateSalle(showUpdate.id, numero,description,valueCategorie)
         .then(() => {
             setListeSalles([])
@@ -125,6 +151,7 @@ function Salle() {
             })
             setShowUpdate({'isClicked': false, 'id': null})
         })
+        setValueCategorie('')
     }
 
     // show update form
@@ -165,15 +192,34 @@ function Salle() {
             return listeCategories.find(elem => elem.id === id).type
         }
     }
+
+    function findIdCategorieById(id) {
+        if (listeSalles.length !== 0) {
+            return listeSalles.find(elem => elem.id === id).categorie
+        }
+    }
+
+    function findNumeroSalleById(id) {
+        if (listeSalles.length !== 0) {
+            return listeSalles.find(elem => elem.id === id).numero
+        }
+    }
+
+    function findDescriptionSalleById(id) {
+        if (listeSalles.length !== 0) {
+            return listeSalles.find(elem => elem.id === id).description
+        }
+    }
+
+    
     
     const sortedList = currentSalles.sort((a, b) => (a.created_at < b.created_at) ? 1 : -1)
     
     // Display table rows of salles
     const salles = sortedList.map(salle => {
-    
-        console.log(salle)
+        
         /*console.log(salle.id)*/
-        console.log(findTypeCategorieById(salle.categorie))
+        //console.log(findTypeCategorieById(salle.categorie))
         return (
             <tr>
                 <td>{salle.numero}</td>
@@ -246,29 +292,37 @@ function Salle() {
         >
             <div className="row mt-4 my-row">
                 <div className="add-salle-form col-sm-4">
-                    <form className="my-form" onSubmit={ !showUpdate.isClicked ? handleCreate : handleUpdate}>
+                    <form className="my-form"  onSubmit={ !showUpdate.isClicked ? handleCreate : handleUpdate}>
                         <div className="mb-4">
                             <legend>{ !showUpdate.isClicked ? "Ajouter une salle" : "Modifier la salle"}</legend>
                             <hr />
-                            <label htmlFor="numeroSalle" className="form-label">Numero : </label>
+                
+                            <label htmlFor="numeroSalle" className="form-label">Numéro : </label>
                             
-                            <input type="text" name="numero" className="form-control" id="numeroSalle" required />
+                            <input type="text" defaultValue={showUpdate.isClicked ? findNumeroSalleById(showUpdate.id) : ""}  onChange={handleNumeroChange} name="numero" className="form-control" id="numeroSalle" required  />
                             
-                            <label htmlFor="descriptionSalle" className="form-label">Déscription : </label>
-                            <input type="text" name="description" className="form-control" id="descriptionSalle" required />
+                            <label htmlFor="descriptionSalle" className="form-label">Description : </label>
+                            <input type="text" name="description" defaultValue={showUpdate.isClicked ? findDescriptionSalleById(showUpdate.id) : ""} onChange={handleSelectDescription} className="form-control" id="descriptionSalle" required />
                             <label htmlFor="selectCategorie" className="form-label">Catégorie:</label>
                                 
                             <select value={valueCategorie} onChange={handleSelectCategorieChange} className="form-control" id="selectCategorie" required>
-                                <option value="">Choisissez la catégorie de la salle</option>
+                                
+                                <option value="" selected>Choisissez la catégorie de la salle</option>
                                         {
                                             listeCategories.map((categorie) =>
+                                            /*console.log("Catégorie.id:" + categorie.id + "//" + "la fonction:" + findIdCategorieById(showUpdate.id) ) : console.log("no one clicked"),*/
+                                               /*showUpdate.isClicked ? categorie.id == findIdCategorieById(showUpdate.id)? 
+                                              /*console.log("Catégorie.id:" + categorie.id + "//" + "la fonction:" + findIdCategorieById(showUpdate.id) + "le type est:" + findTypeCategorieById(findIdCategorieById(showUpdate.id)) ) : console.log("la condition n'est pas passée:" + categorie.id)
+                                                <option key={categorie.id} value={categorie.id} selected>{findTypeCategorieById(findIdCategorieById(showUpdate.id))}</option>*/
                                                 <option key={categorie.id} value={categorie.id}>{categorie.type}</option>
                                             )
+
                                         }
                             </select>
-                                
+                            
+                            
                         </div>
-                        { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
+                        { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary" >Créer</button> : 
                             <div>
                                 <button type="submit" className="btn btn-primary">Modifier</button>
                                 <br />
@@ -295,7 +349,7 @@ function Salle() {
                             <tr className="table-primary">
                                 <th>Numéro</th>
                                 <th>Catégorie</th>
-                                <th>Déscription</th>
+                                <th>Description</th>
                                 <th>Crée le</th>
                                 <th>Modifier</th>
                                 <th>Supprimer</th>
@@ -323,6 +377,8 @@ function Salle() {
         </motion.div>
     )
 
+                    
+                
 }
 
 export default Salle
