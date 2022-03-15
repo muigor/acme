@@ -41,7 +41,6 @@ function Reservation() {
 
     const [valueDate, onChangeDate] = useState(new Date());
     const [valueDuree, setValueDuree] = useState('');
-    const [valueUnite, setValueUnite] = useState('');
     const [valueClient, setValueClient] = useState('1');
     const [valueSalle, setValueSalle] = useState('');
 
@@ -93,13 +92,15 @@ function Reservation() {
         setValueDuree(e.target.value);    
     }
 
-    const handleUniteChange = e => {
-        console.log(e.target.value);
-        setValueUnite(e.target.value);    
-    }
+    
 
     function isUpdateReservationBtnClicked(id) {
-        setShowUpdate({'isClicked': true, 'id': id})
+        setShowUpdate({'isClicked': true, 'id': id});
+        setValueClient(findIdClientById(id));
+        setValueSalle(findIdSalleById(id));
+        setValueDuree(findDureeById(id));
+        onChangeDate(findDateById(id));
+
     }
 
     const handleSelectClientChange = e => {
@@ -117,7 +118,7 @@ function Reservation() {
         e.preventDefault();
         const Duree = parseInt(valueDuree, 10);
 
-        createReservation(valueDate, Duree, valueSalle, valueClient,valueUnite)
+        createReservation(valueDate, Duree, valueSalle, valueClient)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
@@ -142,7 +143,7 @@ function Reservation() {
         onChangeDate(new Date());
         setValueClient('')
         setValueSalle('')
-        setValueUnite('')
+        
     }
 
     // show update form
@@ -150,7 +151,7 @@ function Reservation() {
         e.preventDefault();
         const Duree = parseInt(valueDuree, 10);
 
-        updateReservation(showUpdate.id, valueDate, Duree,valueUnite, valueSalle, valueClient)
+        updateReservation(showUpdate.id, valueDate, Duree, valueSalle, valueClient)
         .then(() => {
             setListeReservation([])
             setNotify({
@@ -160,6 +161,10 @@ function Reservation() {
             })
             setShowUpdate({'isClicked': false, 'id': null})
         })
+        setValueDuree('')
+        onChangeDate(new Date());
+        setValueClient('')
+        setValueSalle('')
     }
     
     function handleDelete(id) {
@@ -237,6 +242,30 @@ function Reservation() {
         return valide ;
       } */
 
+    function findDateById(id){
+        if(listeReservation.length !== 0) {
+            return listeReservation.find(elem => elem.id === id).dateDebut
+        }
+    }
+
+    function findIdClientById(id){
+        if(listeReservation.length !== 0) {
+            return listeReservation.find(elem => elem.id === id).client
+        }
+    }
+
+    function findIdSalleById(id){
+        if(listeReservation.length !== 0) {
+            return listeReservation.find(elem => elem.id === id).Salle
+        }
+    }
+
+
+    function findDureeById(id){
+        if(listeReservation.length !== 0) {
+            return listeReservation.find(elem => elem.id === id).duree
+        }
+    }
 
     function findNomClientById(id) {
         if (listeClient.length !== 0) {
@@ -249,6 +278,15 @@ function Reservation() {
             return listeSalle.find(elem => elem.id === id).numero
         }
     }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        onChangeDate(new Date());
+        setValueClient('');
+        setValueDuree('');
+        setValueSalle('');
+    }
+
     //change the page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
     const sortedList = currentReservations.sort((a,b) =>(a.created_at < b.created_at) ? 1 : -1)
@@ -260,7 +298,7 @@ function Reservation() {
         return (
             <tr>
                 <td><Moment format="DD/MM/YYYY - H:mm:ss" date={reservation.dateDebut} /></td>
-                <td>{reservation.duree} {reservation.unite}</td>
+                <td>{reservation.duree} Heures</td>
                 <td>{ findNomClientById(reservation.client) }</td>
                 <td>{ findNumSalleById(reservation.Salle) }</td>
 
@@ -354,7 +392,7 @@ function Reservation() {
                         {showUpdate.isClicked ? 
                             <span 
                                 className="btn btn-outline-secondary btn-sm btn-annuller" 
-                                onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
+                                onClick={handleAnnuler}
                             >
                                 Annuler la modification
                             </span> : <></>}
@@ -363,7 +401,7 @@ function Reservation() {
                     <form onSubmit={ !showUpdate.isClicked ? handleCreate : handleUpdate}>
                         <div className="row">
                             <div className="form-group col-sm-6 row">
-                                <label htmlFor="inputDateDebut" className="col-sm-2 col-form-label">Date de début</label>
+                                <label htmlFor="inputDateDebut" className="col-sm-2 col-form-label">Début</label>
                                 <div className="col-sm-10">
                                     <DateTimePicker
                                         onChange={onChangeDate}
@@ -373,8 +411,8 @@ function Reservation() {
                                 </div>
                             </div>
                             <div className="form-group col-sm-6 row">
-                                <label htmlFor="inputDuree" className="col-sm-2 col-form-label">Durée</label>
-                                <div className="col-sm-5">
+                                <label htmlFor="inputDuree" className="col-sm-2 col-form-label">Durée(H)</label>
+                                <div className="col-sm-10">
                                     <input 
                                         type="text" 
                                         className="form-control" 
@@ -384,14 +422,6 @@ function Reservation() {
                                         placeholder="Entrer la durée"
                                         required
                                     />
-                                </div>
-                                <div className="col-sm-5">
-                                    <select value={valueUnite} onChange={handleUniteChange} className="form-control" id="selectUnite" required>
-                                        <option value="">Unité</option>
-                                        <option value="Jours">Jours</option>
-                                        <option value="Heures">Heures</option>
-                                        <option value="Minutes">Minutes</option>
-                                    </select>
                                 </div>
                             </div>
                             <div className="form-group col-sm-6 row">

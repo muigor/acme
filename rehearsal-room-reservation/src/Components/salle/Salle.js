@@ -62,7 +62,17 @@ function Salle() {
 
     // show update form
     function isUpdateSalleBtnClicked(id) {
-        setShowUpdate({'isClicked': true, 'id': id})
+        setShowUpdate({'isClicked': true, 'id': id});
+        setValueCategorie(findIdCategorieById(id));
+        setValueDescription(findDescriptionSalleById(id));
+        setValueNumero(findNumeroSalleById(id))
+    }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        setValueCategorie('')
+        setValueNumero('')
+        setValueDescription('')
     }
 
     const handleSelectCategorieChange = e => {
@@ -85,10 +95,10 @@ function Salle() {
         if(creationError) {setCreationError(false);}
         e.preventDefault(); 
         //const numero = parseInt(valueNumero,10)
-        //const valueNumero = e.target[0].value
-        //const valueDescription = e.target[1].value
+        const numero = e.target[0].value
+        const description = e.target[1].value
 
-        createSalle(valueNumero,valueDescription,valueCategorie)
+        createSalle(numero,description,valueCategorie)
         .then((rqResult) => rqResult.json())
             .then((data) => {
                 console.log(data);
@@ -99,12 +109,15 @@ function Salle() {
                         type: "error",
                     })
                 } else {
-                    setListeSalles([])
+                    setListeSalles([]);
                     setNotify({
                         isOpen: true,
                         message: "Salle ajoutée",
                         type: "success",
-                    })
+                    });
+                    setValueCategorie(0);
+                    setValueNumero('');
+                    setValueDescription('');
                 }
 
                 
@@ -112,9 +125,9 @@ function Salle() {
             });
         
             
-            setValueCategorie('')
-            setValueNumero('')
-            setValueDescription('')
+            // setValueCategorie('')
+            // setValueNumero('')
+            // setValueDescription('')
             
 
       
@@ -151,7 +164,10 @@ function Salle() {
             })
             setShowUpdate({'isClicked': false, 'id': null})
         })
-        setValueCategorie('')
+        //setValueCategorie('')
+        setValueCategorie(0);
+        setValueNumero('');
+        setValueDescription('');
     }
 
     // show update form
@@ -232,7 +248,12 @@ function Salle() {
                     <button 
                         type="button" 
                         className="btn btn-outline-info" 
-                        onClick={() => isUpdateSalleBtnClicked(salle.id)} 
+                        onClick={() => {
+                                            isUpdateSalleBtnClicked(salle.id);
+                                            // console.log(document.querySelector("option[value='55']"));
+                                            // document.querySelector("option[value='55']").selected=true;
+                                        }
+                        } 
                     >
                         <i className="fas fa-pen"></i>
                     </button>
@@ -299,36 +320,41 @@ function Salle() {
                 
                             <label htmlFor="numeroSalle" className="form-label">Numéro : </label>
                             
-                            <input type="text" defaultValue={showUpdate.isClicked ? findNumeroSalleById(showUpdate.id) : ""}  onChange={handleNumeroChange} name="numero" className="form-control" id="numeroSalle" required  />
+                            <input type="text" /*defaultValue={showUpdate.isClicked ? findNumeroSalleById(showUpdate.id) : ""}*/ value={valueNumero}  onChange={handleNumeroChange} name="numero" className="form-control" id="numeroSalle" required  />
                             
                             <label htmlFor="descriptionSalle" className="form-label">Description : </label>
-                            <input type="text" name="description" defaultValue={showUpdate.isClicked ? findDescriptionSalleById(showUpdate.id) : ""} onChange={handleSelectDescription} className="form-control" id="descriptionSalle" required />
+                            <input type="text" name="description" /*defaultValue={showUpdate.isClicked ? findDescriptionSalleById(showUpdate.id) : ""*/ value={valueDescription} onChange={handleSelectDescription} className="form-control" id="descriptionSalle" required />
                             <label htmlFor="selectCategorie" className="form-label">Catégorie:</label>
                                 
                             <select value={valueCategorie} onChange={handleSelectCategorieChange} className="form-control" id="selectCategorie" required>
                                 
-                                <option value="" selected>Choisissez la catégorie de la salle</option>
+                                <option key="0" value="">Choisissez la catégorie de la salle</option>
                                         {
                                             listeCategories.map((categorie) =>
-                                            /*console.log("Catégorie.id:" + categorie.id + "//" + "la fonction:" + findIdCategorieById(showUpdate.id) ) : console.log("no one clicked"),*/
-                                               /*showUpdate.isClicked ? categorie.id == findIdCategorieById(showUpdate.id)? 
-                                              /*console.log("Catégorie.id:" + categorie.id + "//" + "la fonction:" + findIdCategorieById(showUpdate.id) + "le type est:" + findTypeCategorieById(findIdCategorieById(showUpdate.id)) ) : console.log("la condition n'est pas passée:" + categorie.id)
-                                                <option key={categorie.id} value={categorie.id} selected>{findTypeCategorieById(findIdCategorieById(showUpdate.id))}</option>*/
+                                                // console.log("Catégorie.id:" + categorie.id + "//" + "la fonction:" + findIdCategorieById(showUpdate.id) ) : console.log("no one clicked"),
+                                                // showUpdate.isClicked ? categorie.id == findIdCategorieById(showUpdate.id)? 
+                                                // console.log("Catégorie.id:" + categorie.id
+                                                //              + "//" + "la fonction:" + findIdCategorieById(showUpdate.id)
+                                                //              + "le type est:" + findTypeCategorieById(findIdCategorieById(showUpdate.id)) )
+                                                            //   : console.log("la condition n'est pas passée:" + categorie.id)
+                                                //  <option key={categorie.id} value={categorie.id} selected>{findTypeCategorieById(findIdCategorieById(showUpdate.id))}</option>:
                                                 <option key={categorie.id} value={categorie.id}>{categorie.type}</option>
                                             )
 
                                         }
                             </select>
+                            {console.log(document.querySelector("option[value='55']"))}
+                            {/* {document.querySelector("option[value='55']").selected=true} */}
                             
                             
                         </div>
-                        { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary" >Créer</button> : 
+                        { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary"  >Créer</button> : 
                             <div>
                                 <button type="submit" className="btn btn-primary">Modifier</button>
                                 <br />
                                 <span 
                                     className="btn btn-outline-secondary btn-sm mt-3" 
-                                    onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
+                                    onClick={handleAnnuler}
                                 >
                                     Annuler la modification
                                 </span>

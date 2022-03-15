@@ -15,6 +15,7 @@ function Material() {
     const [creationError, setCreationError] = useState(null)
     const [listeMaterials, setListeMaterials] = useState([])
     const [listeSalles, setListeSalles]       = useState([])
+    const [valueNom, setValueNom] = useState('')
     const [valueSalle, setValueSalle] = useState('1');
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
@@ -72,17 +73,28 @@ function Material() {
         setValueSalle(e.target.value);    
     }
 
+    const handleNomChange = e => {
+        console.log(e.target.value);
+        setValueNom(e.target.value);    
+    }
+
     // show update form
     function isUpdateMaterialBtnClicked(id) {
         setShowUpdate({'isClicked': true, 'id': id})
+        setValueNom(findNomMaterielById(id));
+        setValueSalle(findIdSalleById(id));
+    }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        setValueNom('');
+        setValueSalle('');
     }
 
     function handleCreate(e) {
         if(creationError) {setCreationError(false);}
         e.preventDefault();
         const nom = e.target[0].value;
-
-
 
         createMaterial(nom,valueSalle)
         .then((rqResult) => rqResult.json())
@@ -104,7 +116,8 @@ function Material() {
                 }
             });
 
-            setValueSalle('')
+            setValueSalle(0);
+            setValueNom('');
     }
 
     // show update form
@@ -120,7 +133,9 @@ function Material() {
                     type: "success",
             })
             setShowUpdate({'isClicked': false, 'id': null})
-        })
+        });
+        setValueSalle(0);
+        setValueNom('');
     }
 
     // show update form
@@ -239,15 +254,15 @@ function Material() {
                             <legend>{ !showUpdate.isClicked ? "Ajouter un matériel" : "Modifier le matériel"}</legend>
                             <hr />
                             <label htmlFor="nomMatériel" className="form-label">Nom : </label>
-                            <input type="text" defaultValue={showUpdate.isClicked? findNomMaterielById(showUpdate.id) : ""}  name="nom" className="form-control" id="nomMatériel" required />
+                            <input type="text" /*defaultValue={showUpdate.isClicked? findNomMaterielById(showUpdate.id) : ""}*/ value={valueNom}  onChange={handleNomChange} name="nom" className="form-control" id="nomMatériel" required />
                             <label htmlFor="numeroSalle" className="form-label">Salle : </label>
                             <select value={valueSalle} onChange={handleSelectSalleChange} className="form-control" id="selectSalle" required>
-                            {!showUpdate.isClicked ?
-                            <option value="">Choisissez une salle</option> : ""}
+                            
+                            <option value="">Choisissez une salle</option>
                                         {
                                             listeSalles.map((salle) =>
-                                                showUpdate.isClicked && salle.id == findIdSalleById(showUpdate.id) ?
-                                                <option key={salle.id} value={salle.id} selected>{findNumSalleById(findIdSalleById(showUpdate.id))}</option>:
+                                                // showUpdate.isClicked && salle.id == findIdSalleById(showUpdate.id) ?
+                                                // <option key={salle.id} value={salle.id} selected>{findNumSalleById(findIdSalleById(showUpdate.id))}</option>:
                                                 <option key={salle.id} value={salle.id} >{salle.numero}</option>
                                             )
                                         }
@@ -259,7 +274,7 @@ function Material() {
                                 <br />
                                 <span 
                                     className="btn btn-outline-secondary btn-sm mt-3" 
-                                    onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
+                                    onClick={handleAnnuler }
                                 >
                                     Annuler la modification
                                 </span>

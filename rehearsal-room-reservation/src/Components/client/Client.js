@@ -14,6 +14,7 @@ function Client() {
 
     const [creationError, setCreationError] = useState(null)
     const [listeClients, setListeClients] = useState([])
+    const [valueNom, setValueClient] = useState([])
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
     const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title:'', subtitle:''})
@@ -36,9 +37,15 @@ function Client() {
         return listeClients;
     }, [listeClients])
 
+    const handleNomChange = e => {
+        console.log(e.target.value);
+        setValueClient(e.target.value);    
+    }
+
     // show update form
     function isUpdateClientBtnClicked(id) {
         setShowUpdate({'isClicked': true, 'id': id})
+        setValueClient(findNomClientById(id));
     }
 
     function handleCreate(e) {
@@ -66,6 +73,12 @@ function Client() {
                     })
                 }
             });
+            setValueClient('');
+    }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        setValueClient('');
     }
 
     // show update form
@@ -82,6 +95,7 @@ function Client() {
             })
             setShowUpdate({'isClicked': false, 'id': null})
         })
+        setValueClient('');
     }
 
     // show update form
@@ -113,7 +127,7 @@ function Client() {
     
         const currentClients = listeClients.slice(indexOfFirstClient, indexOfLastClient);
 
-        function findNomCategorieById(id){
+        function findNomClientById(id){
             if (listeClients.length !== 0) {
                 return listeClients.find(elem => elem.id === id).nom
             }
@@ -202,7 +216,7 @@ return (
                             <legend>{ !showUpdate.isClicked ? "Ajouter un client" : "Modifier le client"}</legend>
                             <hr />
                             <label htmlFor="nomClient" className="form-label">Nom : </label>
-                            <input type="text"  defaultValue= {showUpdate.isClicked ? findNomCategorieById(showUpdate.id) : ""}   name="nom" className="form-control" id="nomClient" required />
+                            <input type="text"  /*defaultValue= {showUpdate.isClicked ? findNomClientById(showUpdate.id) : ""}*/ value={valueNom}  onChange={handleNomChange} name="nom" className="form-control" id="nomClient" required />
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> :
                         <div>
@@ -210,7 +224,7 @@ return (
                         <br />
                         <span 
                             className="btn btn-outline-secondary btn-sm mt-3" 
-                            onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
+                            onClick={handleAnnuler}
                         >
                             Annuler la modification
                         </span>

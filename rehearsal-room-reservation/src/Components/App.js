@@ -103,7 +103,7 @@ function App() {
         return(
             <tr>
                 <td><Moment format="DD/MM/YYYY - H:mm:ss" date={reserv.dateDebut} /></td>
-                <td>{reserv.duree} {reserv.unite}</td>
+                <td>{reserv.duree} Heures</td>
                 <td>{ findNomClientById(reserv.client) }</td>
                 <td>{findNumSalleById(reserv.Salle)}</td>
             </tr>

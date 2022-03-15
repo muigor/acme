@@ -14,6 +14,7 @@ function Categorie() {
 
     const [creationError, setCreationError] = useState(null)
     const [listeCategories, setListeCategories] = useState([])
+    const [valueType, setValueCategorie] = useState([])
     const [showUpdate, setShowUpdate] = useState({'isClicked': false, 'id': null})
     const [notify, setNotify] = useState({isOpen: false, message:'', type:''})
     const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title:'', subtitle:''})
@@ -36,9 +37,22 @@ function Categorie() {
         return listeCategories;
     }, [listeCategories])
 
+    const handleCategorieChange = e => {
+        console.log(e.target.value);
+        setValueCategorie(e.target.value);    
+    }
+
     // show update form
     function isUpdateCategoryBtnClicked(id) {
         setShowUpdate({'isClicked': true, 'id': id})
+        setValueCategorie(findTypeCategorieById(id));
+        
+    }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        setValueCategorie('')
+        
     }
 
     function handleCreate(e) {
@@ -67,6 +81,7 @@ function Categorie() {
                     })
                 }
             });
+            setValueCategorie('');
     }
 
     // show update form
@@ -83,6 +98,7 @@ function Categorie() {
             })
             setShowUpdate({'isClicked': false, 'id': null})
         })
+        setValueCategorie('');
     }
 
     // show update form
@@ -119,6 +135,12 @@ function Categorie() {
             return listeCategories.find(elem => elem.id === id).type
         }
     }
+
+    function handleAnnuler(){
+        setShowUpdate({'isClicked': false, 'id': null});
+        setValueCategorie('');
+    }
+
 
     // change the page
     const paginate = (pageNumber) => setCurrentPage(pageNumber)
@@ -201,7 +223,7 @@ function Categorie() {
                             <legend>{ !showUpdate.isClicked ? "Ajouter une catégorie" : "Modifier la catégorie"}</legend>
                             <hr />
                             <label htmlFor="typeCategorie" className="form-label">Nom : </label>
-                            <input type="text" defaultValue= {showUpdate.isClicked ? findTypeCategorieById(showUpdate.id) : ""}name="type" className="form-control" id="typeCategorie" required />
+                            <input type="text" /*defaultValue= {showUpdate.isClicked ? findTypeCategorieById(showUpdate.id) : ""}*/ value={valueType} onChange={handleCategorieChange}   name="type" className="form-control" id="typeCategorie" required />
                         </div>
                         { !showUpdate.isClicked ? <button type="submit" className="btn btn-primary">Créer</button> : 
                             <div>
@@ -209,7 +231,7 @@ function Categorie() {
                                 <br />
                                 <span 
                                     className="btn btn-outline-secondary btn-sm mt-3" 
-                                    onClick={() => setShowUpdate({'isClicked': false, 'id': null})}
+                                    onClick={ handleAnnuler }
                                 >
                                     Annuler la modification
                                 </span>
